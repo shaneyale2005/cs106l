@@ -25,9 +25,9 @@ const std::string COURSES_NOT_OFFERED_PATH = "student_output/courses_not_offered
  * Hint: Remember what types C++ streams work with?!
  */
 struct Course {
-  /* STUDENT TODO */ title;
-  /* STUDENT TODO */ number_of_units;
-  /* STUDENT TODO */ quarter;
+  std::string title;
+  std::string number_of_units;
+  std::string quarter;
 };
 
 /**
@@ -58,8 +58,31 @@ struct Course {
  * @param filename The name of the file to parse.
  * @param courses  A vector of courses to populate.
  */
-void parse_csv(std::string filename, std::vector<Course> courses) {
-  /* (STUDENT TODO) Your code goes here... */
+// 这里应该传courses的引用，不能用值传递
+void parse_csv(std::string filename, std::vector<Course> &courses) {
+  // ifstream用来从文件中读取数据
+  std::ifstream file(filename);
+  if (!file.is_open()) {
+    std::cerr << "Error: Could not open " << filename << std::endl;
+    return;
+  }
+  std::string line;
+  // 这里用来调过标题行
+  bool isFirstLine = true;
+  while (std::getline(file, line)) {
+    // 这里用来跳过第一行
+    if (isFirstLine) {
+      isFirstLine = false;
+      continue;
+    }
+    std::vector<std::string> parts = split(line, ',');
+    if (parts.size() < 3) continue;
+    std::string title = parts[0];
+    std::string units = parts[1];
+    std::string quarter = parts[2];
+    courses.push_back({title, units, quarter});
+  }
+  file.close();
 }
 
 /**
@@ -80,8 +103,27 @@ void parse_csv(std::string filename, std::vector<Course> courses) {
  * @param all_courses A vector of all courses gotten by calling `parse_csv`.
  *                    This vector will be modified by removing all offered courses.
  */
-void write_courses_offered(std::vector<Course> all_courses) {
-  /* (STUDENT TODO) Your code goes here... */
+void write_courses_offered(std::vector<Course> &all_courses) {
+  std::ofstream out(COURSES_OFFERED_PATH);
+  if (!out.is_open()) {
+    std::cerr << "Error: could not create " << COURSES_NOT_OFFERED_PATH << std::endl;
+    return;
+  }
+  // 写标题行
+  out << "Title,Number of Units,Quarter\n";
+  // 收集要进行删除的课程
+  std::vector<Course> to_delete;
+  for (const Course& c : all_courses) {
+    if (c.quarter != "null") {
+      // 是已经开设的课程了
+      out << c.title << ',' << c.number_of_units << ',' << c.quarter << '\n';
+      to_delete.push_back(c);
+    }
+  }
+  for (const auto& c :to_delete) {
+    delete_elem_from_vector(all_courses, c);
+  }
+  out.close();
 }
 
 /**
@@ -97,8 +139,18 @@ void write_courses_offered(std::vector<Course> all_courses) {
  *
  * @param unlisted_courses A vector of courses that are not offered.
  */
-void write_courses_not_offered(std::vector<Course> unlisted_courses) {
-  /* (STUDENT TODO) Your code goes here... */
+void write_courses_not_offered(std::vector<Course> &unlisted_courses) {
+  std::ofstream out(COURSES_NOT_OFFERED_PATH);
+  if (!out.is_open()) {
+    std::cerr << "Error: could not create " << COURSES_NOT_OFFERED_PATH << std::endl;
+    return;
+  }
+  out << "Title,Number of Units,Quarter\n";
+  // 接下来遍历没有开的课程
+  for (const Course &c : unlisted_courses) {
+    out << c.title << ',' << c.number_of_units << ',' << c.quarter << '\n';
+  }
+  out.close();
 }
 
 int main() {

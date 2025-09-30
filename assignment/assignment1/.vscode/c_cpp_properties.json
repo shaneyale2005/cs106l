@@ -1,0 +1,19 @@
+{
+  "configurations": [
+    {
+      "name": "Mac",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}"
+      ],
+      "defines": [],
+      "cStandard": "c17",
+      "cppStandard": "c++26",
+      "intelliSenseMode": "clang-x64",
+      "forcedInclude": [
+        "${workspaceFolder}/main.cpp"
+      ]
+    }
+  ],
+  "version": 4
+}

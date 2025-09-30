@@ -1,0 +1,9 @@
+# C++ build artifacts
+*.o
+*.out
+*.a
+*.so
+*.exe
+
+# macOS system files
+.DS_Store
