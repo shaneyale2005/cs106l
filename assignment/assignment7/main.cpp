@@ -50,9 +50,30 @@ template <typename T> struct ListNode {
  * @param values The values to store in the list.
  * @return A `unique_ptr` to the head of the list.
  */
-template <typename T> cs106l::unique_ptr<ListNode<T>> create_list(const std::vector<T>& values) {
-  /* STUDENT TODO: Implement this method */
-  throw std::runtime_error("Not implemented: createList");
+template <typename T>
+cs106l::unique_ptr<ListNode<T>> create_list(const std::vector<T>& values) {
+  if (values.empty()) {
+    return nullptr;
+  }
+
+  // 先构造最后一个节点
+  auto node = cs106l::make_unique<ListNode<T>>(values.back());
+
+  // 构造前面的部分
+  std::vector<T> rest(values.begin(), values.end() - 1);
+  auto rest_head = create_list(rest);
+  
+  // 找到 rest 的尾节点并连接
+  if (rest_head) {
+    auto* current = rest_head.operator->();
+    while (current->next) {
+      current = current->next.operator->();
+    }
+    current->next = std::move(node);
+    return rest_head;
+  } else {
+    return node;
+  }
 }
 
 /**

@@ -1,0 +1,13 @@
+# 忽略虚拟环境和缓存
+__pycache__/
+bin/
+include/
+lib/
+lib64/
+pyvenv.cfg
+
+# 保留源文件
+!autograder.py
+!utils.py
+!utils.hpp
+!diagnostics.hpp
